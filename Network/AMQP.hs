@@ -378,8 +378,8 @@ consumeMsgs chan queue ack callback podId =
 consumeMsgs' :: Channel -> Text -> Ack -> ((Message,Envelope) -> IO ()) -> (ConsumerTag -> IO ()) -> FieldTable -> String -> IO ConsumerTag
 consumeMsgs' chan queue ack callback cancelCB args podId = do
     --generate a new consumer tag
-    newConsumerTag <- fmap T.pack $ modifyMVar (lastConsumerTag chan) $ \_ -> return (podId, podId)
-
+    -- newConsumerTag <- fmap T.pack $ modifyMVar (lastConsumerTag chan) $ \_ -> return (podId, podId)
+    let newConsumerTag = podId
     --register the consumer
     modifyMVar_ (consumers chan) $ return . M.insert newConsumerTag (callback, cancelCB)
 
