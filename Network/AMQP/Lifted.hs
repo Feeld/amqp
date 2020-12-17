@@ -24,10 +24,11 @@ consumeMsgs :: MonadBaseControl IO m
             -> Text -- ^ Specifies the name of the queue to consume from.
             -> A.Ack
             -> ((A.Message, A.Envelope) -> m ())
+            -> String
             -> m A.ConsumerTag
-consumeMsgs chan queueName ack callback =
+consumeMsgs chan queueName ack callback podId =
     liftBaseWith $ \runInIO ->
-        A.consumeMsgs chan queueName ack (void . runInIO . callback)
+        A.consumeMsgs chan queueName ack (void . runInIO . callback) podId
 
 -- | an extended version of @consumeMsgs@ that allows you to define a consumer cancellation callback and include arbitrary arguments.
 consumeMsgs' :: MonadBaseControl IO m
@@ -37,7 +38,8 @@ consumeMsgs' :: MonadBaseControl IO m
              -> ((A.Message, A.Envelope) -> m ())
              -> (ConsumerTag -> m ())
              -> FieldTable
+             -> String
              -> m A.ConsumerTag
-consumeMsgs' chan queueName ack callback cancelled args =
+consumeMsgs' chan queueName ack callback cancelled args podId =
     liftBaseWith $ \runInIO ->
-        A.consumeMsgs' chan queueName ack (void . runInIO . callback) (void . runInIO . cancelled) args
+        A.consumeMsgs' chan queueName ack (void . runInIO . callback) (void . runInIO . cancelled) args podId
